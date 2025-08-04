@@ -1,10 +1,17 @@
 {
   "version": 2,
-  "dgSpecHash": "g1cWVQ+SCoo=",
+  "dgSpecHash": "vNOUn0ncsUI=",
   "success": true,
   "projectFilePath": "/home/hacker/Git/PassGen/PassGen/PassGen.csproj",
   "expectedPackageFiles": [
-    "/home/hacker/.nuget/packages/microsoft.aspnetcore.app.ref/9.0.5/microsoft.aspnetcore.app.ref.9.0.5.nupkg.sha512"
+    "/home/hacker/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/7.0.0/microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512",
+    "/home/hacker/.nuget/packages/microsoft.net.illink.tasks/9.0.5/microsoft.net.illink.tasks.9.0.5.nupkg.sha512",
+    "/home/hacker/.nuget/packages/qrcoder/1.6.0/qrcoder.1.6.0.nupkg.sha512",
+    "/home/hacker/.nuget/packages/textcopy/6.2.1/textcopy.6.2.1.nupkg.sha512",
+    "/home/hacker/.nuget/packages/microsoft.netcore.app.runtime.win-x64/9.0.5/microsoft.netcore.app.runtime.win-x64.9.0.5.nupkg.sha512",
+    "/home/hacker/.nuget/packages/microsoft.aspnetcore.app.ref/9.0.5/microsoft.aspnetcore.app.ref.9.0.5.nupkg.sha512",
+    "/home/hacker/.nuget/packages/microsoft.aspnetcore.app.runtime.win-x64/9.0.5/microsoft.aspnetcore.app.runtime.win-x64.9.0.5.nupkg.sha512",
+    "/home/hacker/.nuget/packages/microsoft.netcore.app.host.win-x64/9.0.5/microsoft.netcore.app.host.win-x64.9.0.5.nupkg.sha512"
   ],
   "logs": []
 }

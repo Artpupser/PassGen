@@ -27,3 +27,8 @@
 /home/hacker/Git/PassGen/PassGen/obj/Debug/net9.0/PassGen.pdb
 /home/hacker/Git/PassGen/PassGen/obj/Debug/net9.0/PassGen.genruntimeconfig.cache
 /home/hacker/Git/PassGen/PassGen/obj/Debug/net9.0/ref/PassGen.dll
+/home/hacker/Git/PassGen/PassGen/bin/Debug/net9.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll
+/home/hacker/Git/PassGen/PassGen/bin/Debug/net9.0/QRCoder.dll
+/home/hacker/Git/PassGen/PassGen/bin/Debug/net9.0/TextCopy.dll
+/home/hacker/Git/PassGen/PassGen/obj/Debug/net9.0/PassGen.csproj.AssemblyReference.cache
+/home/hacker/Git/PassGen/PassGen/obj/Debug/net9.0/PassGen.csproj.Up2Date
