@@ -1,11 +1,15 @@
+using System.Text;
 using PassGen.Password.Results;
 using PassGen.Utils;
+using PassGen.Valid;
+using PassGen.Valid.ValidTests;
 
 namespace PassGen.Password.Cores;
 
-[PassCoreId("beta (not working)")]
+[PassCoreId("beta")]
 public sealed class PassCoreBeta : PassCore<PassResultBeta>
 {
+    
     public override PassResultBeta Generate()
     {
         var codeKey = ProjectContext.Terminal.Input("Key word");
@@ -24,7 +28,21 @@ public sealed class PassCoreBeta : PassCore<PassResultBeta>
 
     private static string Process(string codeKey, int length, DateTime creationDate)
     {
-        throw new NotImplementedException();
+        var seed = Encoding.UTF8.GetBytes(codeKey).Sum(x => x);
+        var hash = Tools.GenerateHash(length,
+            $"{creationDate.Year}{creationDate.Month}{creationDate.Day}{creationDate.Hour}{creationDate.Minute}{creationDate.Second}{Tools.GetBase64FromStr(codeKey)}");
+        var rnd = new Random(seed);
+        var rnd2 = new Random(seed + length);
+        var password = new StringBuilder();
+        password.Append(hash);
+        for (var i = 0; i < password.Length; i++)
+        {
+            var skipSymbol = rnd2.Next(int.MinValue, int.MaxValue) % 2 == rnd.Next(int.MinValue, int.MaxValue);
+            if (skipSymbol) continue;
+            var rndIndex = rnd.Next(0, password.Length);
+            password[rndIndex] = PasswordCharacters[rnd2.Next(0, PasswordCharacters.Length)];
+        }
+        return password.ToString();
     }
     public override PassResultBeta Regenerate()
     {

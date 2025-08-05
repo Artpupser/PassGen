@@ -1,6 +1,8 @@
 using System.Text;
 using PassGen.Password.Results;
 using PassGen.Utils;
+using PassGen.Valid;
+using PassGen.Valid.ValidTests;
 
 namespace PassGen.Password.Cores;
 
@@ -24,8 +26,8 @@ public sealed class PassCoreAlpha : PassCore<PassResultAlpha>
     private static string Process(string codeKey, int length)
     {
         var hash = new StringBuilder();
-        for (var i = 0; i < length + 1 % Hash256('*').Length; i++)
-            hash.Append(Hash256(codeKey));
+        for (var i = 0; i < length + 1 % Tools.Hash256('*').Length; i++)
+            hash.Append(Tools.Hash256(codeKey));
         var ex = hash.ToString()[..length];
         hash.Clear();
         var rnd = new Random(codeKey.Select(x => (byte)x).Sum(x => x % 2 == 0 ? x + length : x  - length));
@@ -33,5 +35,8 @@ public sealed class PassCoreAlpha : PassCore<PassResultAlpha>
             hash.Append(ex[rnd.Next(0, ex.Length)]);
         return hash.ToString();
     }
-    public override PassResultAlpha Regenerate() => Generate();
+    public override PassResultAlpha Regenerate()
+    {
+        return Generate();
+    }
 }
