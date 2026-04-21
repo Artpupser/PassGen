@@ -23,6 +23,8 @@
 ## 📎 Navigation
 
 - [✨ Features](#-features)
+- [🧵 Usage](#-usage)
+- [👀 Preview](#-usage)
 - [🦾️ Installation](#-installation)
     - [Linux 🐧](#linux-)
     - [Windows 🖥️](#windows-)
@@ -40,6 +42,17 @@
 | Cross-Platform Support      | Works smoothly across different operating systems.                            |
 | Lightweight                 | Fast startup and minimal resource usage.                                      |
 | User-Friendly CLI interface | Simple design that makes password generation easy for everyone.               |
+
+## 🧵 Usage
+
+Use your keyboard to interact with the app
+
+1. Run `/set --list` to view all available models.
+2. Run `/gen` to start the generation process with the selected model.
+3. Fill in the generation form.
+4. Receive your password receipt.
+
+## 👀 Preview
 
 ## 🦾 Installation
 
