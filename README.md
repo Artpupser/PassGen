@@ -13,7 +13,7 @@
 ![.Version](https://img.shields.io/github/v/release/Artpupser/PassGen?style=for-the-badge)
 
 
-#### [PassGen](https://www.nuget.org/packages/PupaLib.FileIO) is password generator in terminal 🎯
+#### [PassGen](https://github.com/Artpupser/PassGen) is password generator in terminal 🎯
 
 <img src="https://github.com/Artpupser/PassGen/blob/main/assets/banner.jpg" style="border-radius: 20px; max-height: 500px">
 

@@ -8,6 +8,9 @@ env:
   PROJECT_LIB_PATH: 'src/PassGen/PassGen.csproj'
   GITHUB_USERNAME: "Artpupser"
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -53,4 +56,6 @@ jobs:
         with: 
           name: "PassGen ${{ github.ref_name }}"
           tag_name: ${{ github.ref_name }}
-          body_path:
+          body_path: RELEASE.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
