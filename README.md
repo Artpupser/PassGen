@@ -15,7 +15,7 @@
 
 #### [PassGen](https://www.nuget.org/packages/PupaLib.FileIO) is password generator in terminal 🎯
 
-<img src="https://github.com/Artpupser/PupaLib.FileIO/blob/main/assets/banner.jpg" style="border-radius: 20px; max-height: 500px">
+<img src="https://github.com/Artpupser/PassGen/blob/main/assets/banner.jpg" style="border-radius: 20px; max-height: 500px">
 
 </div>
 
