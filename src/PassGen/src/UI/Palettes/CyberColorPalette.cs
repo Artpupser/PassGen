@@ -1,4 +1,4 @@
-﻿namespace PassGen.Graphics.Palettes;
+﻿namespace PassGen.UI.Palettes;
 
 [ColorPaletteInfo("cyber")]
 public record CyberColorPalette : IColorPalette {

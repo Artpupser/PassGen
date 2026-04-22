@@ -2,7 +2,7 @@
 
 using PupaLib.Core;
 
-namespace PassGen.Graphics.Palettes;
+namespace PassGen.UI.Palettes;
 
 public interface IColorPalette {
    public Color Primary { get; }

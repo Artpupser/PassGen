@@ -1,11 +1,11 @@
-using PassGen.Graphics.Palettes;
 using PassGen.Services;
+using PassGen.UI.Palettes;
 
 using PupaLib.Core;
 
-namespace PassGen.Graphics;
+namespace PassGen.UI;
 
-internal sealed class ConsoleGraphics(IColorPalette palette, ConsoleInputService inputService) : IGraphics {
+internal sealed class ConsoleGraphics(IColorPalette palette, ConsoleInputService inputService) : Graphics(palette) {
    public IColorPalette CurrentPalette { get; set; } = palette;
 
    private void SetColor(Color? color = null) {
@@ -13,24 +13,26 @@ internal sealed class ConsoleGraphics(IColorPalette palette, ConsoleInputService
       Console.Out.Write($"\e[38;2;{color.Value.R};{color.Value.G};{color.Value.B}m");
    }
 
-   public async Task RenderText(string content, Color? color = null) {
+   public override ValueTask RenderText(string content, Color? color = null) {
       SetColor(color);
-      await Console.Out.WriteAsync(content);
-      ColorReset();
+      Console.Out.Write(content);
+      SetColor(Default);
+      return ValueTask.CompletedTask;
    }
 
-   public async Task RenderTextLine(string content, Color? color = null) {
+   public override ValueTask RenderTextLine(string content, Color? color = null) {
       SetColor(color);
-      await Console.Out.WriteLineAsync(content);
-      ColorReset();
+      Console.Out.WriteLine(content);
+      SetColor(Default);
+      return ValueTask.CompletedTask;
    }
 
-   public void Clear() {
+   public override async Task RenderElement(IGraphicsElement element, CancellationToken cancellationToken = default) {
+      await element.Render(this, cancellationToken);
+   }
+
+   public override void ClearScreen() {
       Console.Clear();
-   }
-
-   public void ColorReset() {
-      SetColor(CurrentPalette.Default);
    }
 
    private async Task<string> Input(CancellationToken cancellationToken) {
@@ -46,7 +48,6 @@ internal sealed class ConsoleGraphics(IColorPalette palette, ConsoleInputService
 
    public async Task<Option<string>> RenderInputDialogue(string prompt, CancellationToken cancellationToken) {
       await RenderText($"[{prompt}] > ", CurrentPalette.Primary);
-      ColorReset();
       var result = await Input(cancellationToken);
       return result == "<-" ? Option<string>.Fail() : Option<string>.Ok(result);
    }
@@ -71,18 +72,15 @@ internal sealed class ConsoleGraphics(IColorPalette palette, ConsoleInputService
                cursor = Math.Clamp(cursor + 1, 0, items.Length - 1);
                break;
             case ConsoleKey.Enter:
-               ColorReset();
                return Option<(int, T)>.Ok((cursor, items[cursor]));
             case ConsoleKey.Backspace:
-               ColorReset();
                return Option<(int, T)>.Fail();
          }
 
-         Clear();
+         ClearScreen();
       }
 
       await RenderText("Reset");
-      ColorReset();
       return Option<(int, T)>.Fail();
    }
 

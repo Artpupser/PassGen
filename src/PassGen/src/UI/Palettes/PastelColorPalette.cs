@@ -1,4 +1,4 @@
-﻿namespace PassGen.Graphics.Palettes;
+﻿namespace PassGen.UI.Palettes;
 
 [ColorPaletteInfo("pastel")]
 public record PastelColorPalette : IColorPalette {

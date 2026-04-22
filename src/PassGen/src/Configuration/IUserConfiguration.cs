@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Text.Json.Serialization;
 
-using PassGen.Graphics.Palettes;
+using PassGen.UI.Palettes;
 
 using PupaLib.Core;
 

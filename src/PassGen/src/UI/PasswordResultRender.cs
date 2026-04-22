@@ -8,11 +8,11 @@ using QRCoder;
 
 using TextCopy;
 
-namespace PassGen.Graphics;
+namespace PassGen.UI;
 
-public sealed class PasswordResultRender(IGraphics graphics, IUserConfiguration configuration)
+public sealed class PasswordResultRender(Graphics graphics, IUserConfiguration configuration)
    : IPasswordResultVisitor {
-   private IGraphics Graphics { get; } = graphics;
+   private Graphics Graphics { get; } = graphics;
    private const int LineCheckWidth = 30;
    private const string StartCheckText = "PASSWORD CHECK";
 
@@ -32,7 +32,7 @@ public sealed class PasswordResultRender(IGraphics graphics, IUserConfiguration 
          }
 
          sb.AppendLine();
-         if (configuration.QrCodeHidden) 
+         if (configuration.QrCodeHidden)
             continue;
          await Graphics.RenderTextLine(string.Empty);
       }
@@ -42,8 +42,8 @@ public sealed class PasswordResultRender(IGraphics graphics, IUserConfiguration 
 
    public async Task VisitBeta(PasswordBetaResult result, CancellationToken cancellationToken) {
       var sb = new StringBuilder();
-      Graphics.Clear();
-      await BeforeCheckGeneration("<< Beta generation result ⚡⚡ >>",result,cancellationToken);
+      Graphics.ClearScreen();
+      await BeforeCheckGeneration("<< Beta generation result ⚡⚡ >>", result, cancellationToken);
       var endCheckText = result.CreatedAt.ToString(CultureInfo.InvariantCulture);
       sb.AppendLine(StartCheckText.PadRight(LineCheckWidth / 2 + StartCheckText.Length / 2, '_')
          .PadLeft(LineCheckWidth, '_'));
@@ -61,8 +61,8 @@ public sealed class PasswordResultRender(IGraphics graphics, IUserConfiguration 
 
    public async Task VisitAlpha(PasswordAlphaResult result, CancellationToken cancellationToken) {
       var sb = new StringBuilder();
-      await BeforeCheckGeneration("<< Alpha generation result ⚡ >>",result,cancellationToken);
-      
+      await BeforeCheckGeneration("<< Alpha generation result ⚡ >>", result, cancellationToken);
+
       var endCheckText = result.CreatedAt.ToString(CultureInfo.InvariantCulture);
       sb.AppendLine(StartCheckText.PadRight(LineCheckWidth / 2 + StartCheckText.Length / 2, '_')
          .PadLeft(LineCheckWidth, '_'));
@@ -80,27 +80,26 @@ public sealed class PasswordResultRender(IGraphics graphics, IUserConfiguration 
 
    private async Task BeforeCheckGeneration(string title, PasswordResult result, CancellationToken cancellationToken) {
       var props = result.GetProps();
-      Graphics.Clear();
-      await Graphics.RenderTextLine($"{title}", Graphics.CurrentPalette.Primary);
-      await Graphics.RenderTextLine(string.Empty.PadRight(20, '-'), Graphics.CurrentPalette.Wrong);
+      Graphics.ClearScreen();
+      await Graphics.RenderTextLine($"{title}", Graphics.Primary);
+      await Graphics.RenderTextLine(string.Empty.PadRight(20, '-'), Graphics.Wrong);
       foreach (var prop in props) {
-         await Graphics.RenderText($"{prop.Name}: ", Graphics.CurrentPalette.Primary);
+         await Graphics.RenderText($"{prop.Name}: ", Graphics.Primary);
          var valueContent = prop.GetValue(result)!.ToString()!;
-         if (prop.Name == "Password" && configuration.Hidden) {
-            valueContent = new string('*', valueContent.Length);
-         }
-         await Graphics.RenderTextLine(valueContent, Graphics.CurrentPalette.Success);
+         if (prop.Name == "Password" && configuration.Hidden) valueContent = new string('*', valueContent.Length);
+         await Graphics.RenderTextLine(valueContent, Graphics.Success);
       }
-      await Graphics.RenderTextLine(string.Empty.PadRight(20, '-'), Graphics.CurrentPalette.Wrong);
+
+      await Graphics.RenderTextLine(string.Empty.PadRight(20, '-'), Graphics.Wrong);
    }
-   
+
    private async Task AfterCheckGeneration(StringBuilder sb, string password, CancellationToken cancellationToken) {
-      await Graphics.RenderTextLine("QR Code: ", Graphics.CurrentPalette.Primary);
+      await Graphics.RenderTextLine("QR Code: ", Graphics.Primary);
       var qrCode = await DrawQrCode(password);
       await ClipboardService.SetTextAsync($"{(configuration.QrCodeBuffer ? $"{qrCode}\n\n" : string.Empty)}{sb}",
          cancellationToken);
-      await Graphics.RenderTextLine("Data copied to clipboard!", Graphics.CurrentPalette.Success);
-      await Graphics.RenderTextLine("Saved content: ", Graphics.CurrentPalette.Primary);
-      if (!configuration.Hidden) await Graphics.RenderText(sb.ToString(), Graphics.CurrentPalette.Default);
+      await Graphics.RenderTextLine("Data copied to clipboard!", Graphics.Success);
+      await Graphics.RenderTextLine("Saved content: ", Graphics.Primary);
+      if (!configuration.Hidden) await Graphics.RenderText(sb.ToString(), Graphics.Default);
    }
 }

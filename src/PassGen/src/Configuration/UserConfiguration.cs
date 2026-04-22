@@ -14,7 +14,7 @@ internal sealed class UserConfiguration(VirtualFile file) : IUserConfiguration {
    [JsonPropertyName("qrcode_buffer")] public bool QrCodeBuffer { get; set; }
    [JsonPropertyName("qrcode_hidden")] public bool QrCodeHidden { get; set; }
 
-   public async Task Load(CancellationToken cancellationToken) {
+   public async Task LoadAsync(CancellationToken cancellationToken) {
       Dictionary<string, object> objects;
       var loaded = false;
       try {
@@ -27,9 +27,11 @@ internal sealed class UserConfiguration(VirtualFile file) : IUserConfiguration {
 
       foreach (var prop in this.GetProps()) {
          var jsonName = prop.GetCustomAttribute<JsonPropertyNameAttribute>()!.Name;
-         prop.SetValue(this, loaded ? Convert.ChangeType(((JsonElement)objects[jsonName]).ToString(), prop.PropertyType) : objects[jsonName]);
+         prop.SetValue(this,
+            loaded
+               ? Convert.ChangeType(((JsonElement)objects[jsonName]).ToString(), prop.PropertyType)
+               : objects[jsonName]);
       }
-      
    }
 
    private static Dictionary<string, object> Default() {
@@ -37,13 +39,14 @@ internal sealed class UserConfiguration(VirtualFile file) : IUserConfiguration {
          ["palette"] = "default",
          ["hidden"] = false,
          ["qrcode_buffer"] = false,
-         ["qrcode_hidden"] = false,
+         ["qrcode_hidden"] = false
       };
       return dict;
    }
 
    public Task Save(CancellationToken cancellationToken) {
-      var dict = this.GetProps().Select(x => (x.GetCustomAttribute<JsonPropertyNameAttribute>()!.Name, x.GetValue(this))).ToDictionary();
+      var dict = this.GetProps()
+         .Select(x => (x.GetCustomAttribute<JsonPropertyNameAttribute>()!.Name, x.GetValue(this))).ToDictionary();
       return file.WriteTContentAsync(dict, new JsonSystemSerializer(), cancellationToken);
    }
 }

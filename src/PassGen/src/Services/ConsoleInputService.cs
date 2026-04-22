@@ -4,7 +4,7 @@ using PupaLib.Core;
 
 namespace PassGen.Services;
 
-internal sealed class ConsoleInputService {
+public sealed class ConsoleInputService {
    private readonly Eventer<ConsoleKeyInfo> _keyPressed;
 
    public ConsoleInputService() {

@@ -1,4 +1,4 @@
-namespace PassGen.Graphics;
+namespace PassGen.UI;
 
 public readonly record struct Color {
    public static Color White { get; } = FromRgb(255, 255, 255);

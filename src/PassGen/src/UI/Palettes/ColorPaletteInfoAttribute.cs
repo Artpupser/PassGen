@@ -1,4 +1,4 @@
-﻿namespace PassGen.Graphics.Palettes;
+﻿namespace PassGen.UI.Palettes;
 
 [AttributeUsage(AttributeTargets.Class)]
 public sealed class ColorPaletteInfoAttribute(string name) : Attribute {
