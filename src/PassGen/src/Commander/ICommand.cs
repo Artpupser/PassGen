@@ -9,5 +9,4 @@ public interface ICommand {
    public HashSet<string> Tags { get; }
 
    public Option Load(string input);
-   
 }

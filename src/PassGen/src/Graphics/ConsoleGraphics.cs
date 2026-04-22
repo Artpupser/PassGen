@@ -1,21 +1,18 @@
-using Microsoft.Extensions.Configuration;
-
+using PassGen.Graphics.Palettes;
 using PassGen.Services;
 
 using PupaLib.Core;
 
 namespace PassGen.Graphics;
 
-internal sealed class ConsoleGraphics(IConfiguration configuration, IColorPalette palette, ConsoleInputService inputService) : IGraphics {
-   public IColorPalette CurrentPalette => palette;
+internal sealed class ConsoleGraphics(IColorPalette palette, ConsoleInputService inputService) : IGraphics {
+   public IColorPalette CurrentPalette { get; set; } = palette;
 
    private void SetColor(Color? color = null) {
-      if (color == null) {
-         return;
-      }
+      if (color == null) return;
       Console.Out.Write($"\e[38;2;{color.Value.R};{color.Value.G};{color.Value.B}m");
    }
-   
+
    public async Task RenderText(string content, Color? color = null) {
       SetColor(color);
       await Console.Out.WriteAsync(content);
@@ -66,8 +63,7 @@ internal sealed class ConsoleGraphics(IConfiguration configuration, IColorPalett
 
          var key = await inputService.InputKeyAsync(cancellationToken);
 
-         switch (key.Key)
-         {
+         switch (key.Key) {
             case ConsoleKey.W:
                cursor = Math.Clamp(cursor - 1, 0, items.Length - 1);
                break;
@@ -81,37 +77,37 @@ internal sealed class ConsoleGraphics(IConfiguration configuration, IColorPalett
                ColorReset();
                return Option<(int, T)>.Fail();
          }
-         
+
          Clear();
       }
+
       await RenderText("Reset");
       ColorReset();
       return Option<(int, T)>.Fail();
    }
 
    public async Task RenderTable(string[] titles, string[][] items, int[] width) {
-      var lineWidth = (titles.Length - 1) + width.Sum();
-      await RenderTextLine(string.Empty.PadRight(lineWidth,'-'), CurrentPalette.Default);
+      var lineWidth = titles.Length - 1 + width.Sum();
+      await RenderTextLine(string.Empty.PadRight(lineWidth, '-'), CurrentPalette.Default);
       if (items.Sum(x => x.Length) % titles.Length == 0 && items.All(x => x.Length == titles.Length)) {
          for (var i = 0; i < titles.Length; i++) {
-            await RenderText($"|{titles[i].PadLeft(width[i] / 2 + titles[i].Length / 2)}".PadRight(width[i]), CurrentPalette.Default);
-            if (i == titles.Length -1) {
-               await RenderText($"|", CurrentPalette.Default);
-            }
+            await RenderText($"|{titles[i].PadLeft(width[i] / 2 + titles[i].Length / 2)}".PadRight(width[i]),
+               CurrentPalette.Default);
+            if (i == titles.Length - 1) await RenderText($"|", CurrentPalette.Default);
          }
 
          await RenderTextLine(string.Empty);
-         await RenderTextLine(string.Empty.PadRight(lineWidth,'-'), CurrentPalette.Default);
+         await RenderTextLine(string.Empty.PadRight(lineWidth, '-'), CurrentPalette.Default);
          for (var i = 0; i < items.Length; i++) {
             for (var j = 0; j < items[i].Length; j++) {
                await RenderText($"|{items[i][j]}".PadRight(width[j]), CurrentPalette.Default);
-               if (j == titles.Length -1) {
-                  await RenderText($"|", CurrentPalette.Default);
-               }
+               if (j == titles.Length - 1) await RenderText($"|", CurrentPalette.Default);
             }
+
             await RenderTextLine(string.Empty);
          }
-         await RenderTextLine(string.Empty.PadRight(lineWidth,'-'), CurrentPalette.Default);
+
+         await RenderTextLine(string.Empty.PadRight(lineWidth, '-'), CurrentPalette.Default);
       }
 
       await Task.CompletedTask;

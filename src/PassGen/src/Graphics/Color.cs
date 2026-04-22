@@ -1,8 +1,7 @@
 namespace PassGen.Graphics;
 
 public readonly record struct Color {
-
-   public static Color White { get; } = Color.FromRgb(255, 255, 255);
+   public static Color White { get; } = FromRgb(255, 255, 255);
    public byte R { get; }
    public byte G { get; }
    public byte B { get; }

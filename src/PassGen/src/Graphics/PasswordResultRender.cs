@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Text;
 
+using PassGen.Configuration;
 using PassGen.Password.Results;
 
 using QRCoder;
@@ -9,38 +10,43 @@ using TextCopy;
 
 namespace PassGen.Graphics;
 
-public sealed class PasswordResultRender(IGraphics graphics) : IPasswordResultVisitor {
+public sealed class PasswordResultRender(IGraphics graphics, IUserConfiguration configuration)
+   : IPasswordResultVisitor {
    private IGraphics Graphics { get; } = graphics;
    private const int LineCheckWidth = 30;
    private const string StartCheckText = "PASSWORD CHECK";
-   
 
-   private async Task DrawQrCode(string value) {
-      using var qrCodeData = QRCodeGenerator.GenerateQrCode(value, QRCodeGenerator.ECCLevel.M, forceUtf8: true, utf8BOM: false, eciMode: QRCodeGenerator.EciMode.Utf8);
+
+   private async Task<string> DrawQrCode(string value) {
+      var sb = new StringBuilder();
+      using var qrCodeData = QRCodeGenerator.GenerateQrCode(value, QRCodeGenerator.ECCLevel.M, true, false,
+         QRCodeGenerator.EciMode.Utf8);
       for (var i = 4; i < qrCodeData.ModuleMatrix.Count - 4; i++) {
          var line = qrCodeData.ModuleMatrix[i];
          for (var j = 4; j < line.Length - 4; j++) {
-            await Graphics.RenderText(line[j] ? "██" : "  ", Color.White);
+            var chunk = line[j] ? "██" : "  ";
+            sb.Append(chunk);
+            if (configuration.QrCodeHidden)
+               continue;
+            await Graphics.RenderText(chunk, Color.White);
          }
+
+         sb.AppendLine();
+         if (configuration.QrCodeHidden) 
+            continue;
          await Graphics.RenderTextLine(string.Empty);
       }
+
+      return sb.ToString();
    }
 
    public async Task VisitBeta(PasswordBetaResult result, CancellationToken cancellationToken) {
       var sb = new StringBuilder();
       Graphics.Clear();
-      await Graphics.RenderTextLine("<< Beta generation result ⚡⚡ >>", Graphics.CurrentPalette.Primary);
-      await Graphics.RenderTextLine(string.Empty.PadRight(20,'-'), Graphics.CurrentPalette.Wrong);
-      await Graphics.RenderText($"Password: ", Graphics.CurrentPalette.Primary);
-      await Graphics.RenderTextLine($"{result.Password}", Graphics.CurrentPalette.Success);
-      await Graphics.RenderText($"Length: ", Graphics.CurrentPalette.Primary);
-      await Graphics.RenderTextLine($"{result.Password.Length}", Graphics.CurrentPalette.Secondary);
-      await Graphics.RenderText($"Created At: ", Graphics.CurrentPalette.Primary);
-      await Graphics.RenderTextLine($"{result.CreatedAt}", Graphics.CurrentPalette.Secondary);
-      await Graphics.RenderTextLine(string.Empty.PadRight(20,'-'), Graphics.CurrentPalette.Wrong);
-      
+      await BeforeCheckGeneration("<< Beta generation result ⚡⚡ >>",result,cancellationToken);
       var endCheckText = result.CreatedAt.ToString(CultureInfo.InvariantCulture);
-      sb.AppendLine(StartCheckText.PadRight(LineCheckWidth / 2 + StartCheckText.Length / 2, '_').PadLeft(LineCheckWidth, '_'));
+      sb.AppendLine(StartCheckText.PadRight(LineCheckWidth / 2 + StartCheckText.Length / 2, '_')
+         .PadLeft(LineCheckWidth, '_'));
       sb.AppendLine($"PASSWORD: {result.Password}");
       sb.AppendLine($"RESTORE: ");
       sb.AppendLine($"\tSECRET: {result.KeyCode}");
@@ -48,49 +54,53 @@ public sealed class PasswordResultRender(IGraphics graphics) : IPasswordResultVi
       sb.AppendLine($"\tCREATED_AT: {result.CreatedAt}");
       sb.AppendLine($"INFO: ");
       sb.AppendLine($"\tEMAIL: ");
-      sb.AppendLine(endCheckText.PadRight(LineCheckWidth / 2 + endCheckText.Length / 2, '_').PadLeft(LineCheckWidth, '_'));
-
-      await ClipboardService.SetTextAsync(sb.ToString(), cancellationToken);
-      
-      await Graphics.RenderTextLine("Data copied to clipboard!", Graphics.CurrentPalette.Success);
-      await Graphics.RenderTextLine("QR Code: ", Graphics.CurrentPalette.Primary);
-      await DrawQrCode(result.Password);
-      await Graphics.RenderTextLine("Saved content: ", Graphics.CurrentPalette.Primary);
-      await Graphics.RenderText(sb.ToString(), Graphics.CurrentPalette.Default);
+      sb.AppendLine(endCheckText.PadRight(LineCheckWidth / 2 + endCheckText.Length / 2, '_')
+         .PadLeft(LineCheckWidth, '_'));
+      await AfterCheckGeneration(sb, result.Password, cancellationToken);
    }
 
    public async Task VisitAlpha(PasswordAlphaResult result, CancellationToken cancellationToken) {
       var sb = new StringBuilder();
-      Graphics.Clear();
-      await Graphics.RenderTextLine("<< Alpha generation result ⚡ >>", Graphics.CurrentPalette.Primary);
-      await Graphics.RenderTextLine(string.Empty.PadRight(20,'-'), Graphics.CurrentPalette.Wrong);
-      await Graphics.RenderText($"Password: ", Graphics.CurrentPalette.Primary);
-      await Graphics.RenderTextLine($"{result.Password}", Graphics.CurrentPalette.Success);
-      await Graphics.RenderText($"Length: ", Graphics.CurrentPalette.Primary);
-      await Graphics.RenderTextLine($"{result.Password.Length}", Graphics.CurrentPalette.Secondary);
-      await Graphics.RenderTextLine(string.Empty.PadRight(20,'-'), Graphics.CurrentPalette.Wrong);
+      await BeforeCheckGeneration("<< Alpha generation result ⚡ >>",result,cancellationToken);
       
       var endCheckText = result.CreatedAt.ToString(CultureInfo.InvariantCulture);
-      
-      sb.AppendLine(StartCheckText.PadRight(LineCheckWidth / 2 + StartCheckText.Length / 2, '_').PadLeft(LineCheckWidth, '_'));
+      sb.AppendLine(StartCheckText.PadRight(LineCheckWidth / 2 + StartCheckText.Length / 2, '_')
+         .PadLeft(LineCheckWidth, '_'));
       sb.AppendLine($"PASSWORD: {result.Password}");
       sb.AppendLine($"RESTORE: ");
       sb.AppendLine($"\tSECRET: {result.KeyCode}");
       sb.AppendLine($"\tLENGTH: {result.Length}");
       sb.AppendLine($"INFO: ");
       sb.AppendLine($"\tEMAIL: ");
-      sb.AppendLine(endCheckText.PadRight(LineCheckWidth / 2 + endCheckText.Length / 2, '_').PadLeft(LineCheckWidth, '_'));
+      sb.AppendLine(endCheckText.PadRight(LineCheckWidth / 2 + endCheckText.Length / 2, '_')
+         .PadLeft(LineCheckWidth, '_'));
 
-      await ClipboardService.SetTextAsync(sb.ToString(), cancellationToken);
-      
-      await Graphics.RenderTextLine("Data copied to clipboard!", Graphics.CurrentPalette.Success);
+      await AfterCheckGeneration(sb, result.Password, cancellationToken);
+   }
+
+   private async Task BeforeCheckGeneration(string title, PasswordResult result, CancellationToken cancellationToken) {
+      var props = result.GetProps();
+      Graphics.Clear();
+      await Graphics.RenderTextLine($"{title}", Graphics.CurrentPalette.Primary);
+      await Graphics.RenderTextLine(string.Empty.PadRight(20, '-'), Graphics.CurrentPalette.Wrong);
+      foreach (var prop in props) {
+         await Graphics.RenderText($"{prop.Name}: ", Graphics.CurrentPalette.Primary);
+         var valueContent = prop.GetValue(result)!.ToString()!;
+         if (prop.Name == "Password" && configuration.Hidden) {
+            valueContent = new string('*', valueContent.Length);
+         }
+         await Graphics.RenderTextLine(valueContent, Graphics.CurrentPalette.Success);
+      }
+      await Graphics.RenderTextLine(string.Empty.PadRight(20, '-'), Graphics.CurrentPalette.Wrong);
+   }
+   
+   private async Task AfterCheckGeneration(StringBuilder sb, string password, CancellationToken cancellationToken) {
       await Graphics.RenderTextLine("QR Code: ", Graphics.CurrentPalette.Primary);
-      await DrawQrCode(result.Password);
+      var qrCode = await DrawQrCode(password);
+      await ClipboardService.SetTextAsync($"{(configuration.QrCodeBuffer ? $"{qrCode}\n\n" : string.Empty)}{sb}",
+         cancellationToken);
+      await Graphics.RenderTextLine("Data copied to clipboard!", Graphics.CurrentPalette.Success);
       await Graphics.RenderTextLine("Saved content: ", Graphics.CurrentPalette.Primary);
-      await Graphics.RenderText(sb.ToString(), Graphics.CurrentPalette.Default);
+      if (!configuration.Hidden) await Graphics.RenderText(sb.ToString(), Graphics.CurrentPalette.Default);
    }
 }
-
-
-
-

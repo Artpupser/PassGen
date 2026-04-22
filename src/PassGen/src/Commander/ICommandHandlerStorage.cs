@@ -17,7 +17,8 @@ public interface ICommandHandlerStorage {
          var id = info.GetCustomAttribute<CommanderHandlerIdAttribute>()?.Id ??
                   throw new Exception($"{nameof(CommanderHandlerIdAttribute)} not found");
          var method =
-            (ICommandProcessor.CommanderHandlerDelegate)info.CreateDelegate(typeof(ICommandProcessor.CommanderHandlerDelegate), obj);
+            (ICommandProcessor.CommanderHandlerDelegate)info.CreateDelegate(
+               typeof(ICommandProcessor.CommanderHandlerDelegate), obj);
          dict.Add(id, method);
       }
 

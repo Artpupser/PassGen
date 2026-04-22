@@ -17,9 +17,10 @@ internal sealed class ConsoleInputService {
    public async Task<ConsoleKeyInfo> InputKeyAsync(CancellationToken cancellationToken) {
       var tcs = new TaskCompletionSource();
       var key = new ConsoleKeyInfo();
-      var handler = _keyPressed.Subscribe((_,  args) => {
+      var handler = _keyPressed.Subscribe((_, args) => {
          key = args;
-         tcs.SetResult();;
+         tcs.SetResult();
+         ;
       });
       await Task.WhenAny(
          tcs.Task,

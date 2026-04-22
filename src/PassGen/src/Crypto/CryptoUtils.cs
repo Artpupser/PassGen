@@ -16,7 +16,7 @@ public static class CryptoUtils {
    public static string Base64(string str) {
       return Convert.ToBase64String(Encoding.UTF8.GetBytes(str));
    }
-   
+
    public static string GenerateArgon(string content) {
       var salt = RandomNumberGenerator.GetBytes(16);
       var argon2 = new Argon2id(Encoding.UTF8.GetBytes(content)) {
@@ -28,12 +28,12 @@ public static class CryptoUtils {
       var hash = argon2.GetBytes(32);
       return Convert.ToBase64String(hash);
    }
-   
+
    public static string GenerateSha512(string content) {
       var bytes = SHA512.HashData(Encoding.UTF8.GetBytes(content));
       return Convert.ToHexString(bytes);
    }
-   
+
    public static string GenerateSha256(string content) {
       var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(content));
       return Convert.ToHexString(bytes);
@@ -43,5 +43,4 @@ public static class CryptoUtils {
       var bytes = MD5.HashData(Encoding.UTF8.GetBytes(content));
       return Convert.ToHexString(bytes);
    }
-
 }
