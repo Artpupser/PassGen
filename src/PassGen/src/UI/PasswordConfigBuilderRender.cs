@@ -48,6 +48,7 @@ public sealed class PasswordConfigBuilderRender(Graphics graphics, ConsoleInputS
 
       while (!cancellationToken.IsCancellationRequested) {
          inputField = InputField.ConsoleInputField("Time", inputService);
+         await inputField.Render(graphics, cancellationToken);
          if (inputField.Result == string.Empty)
             return Option.Fail();
          if (!DateTime.TryParse(inputField.Result, out var time))
@@ -84,6 +85,7 @@ public sealed class PasswordConfigBuilderRender(Graphics graphics, ConsoleInputS
 
       while (!cancellationToken.IsCancellationRequested) {
          inputField = InputField.ConsoleInputField("Time", inputService);
+         await inputField.Render(graphics, cancellationToken);
          if (inputField.Result == string.Empty)
             return Option.Fail();
          if (!DateTime.TryParse(inputField.Result, out var time))
