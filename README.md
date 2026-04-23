@@ -47,10 +47,12 @@
 
 Use your keyboard to interact with the app
 
-1. Run `/set --list` to view all available models.
-2. Run `/gen` to start the generation process with the selected model.
-3. Fill in the generation form.
-4. Receive your password receipt.
+1. Run `model --list` to view all available models.
+2. Run `model argon` to set generation password model.
+3. Run `model` check current model.
+4. Run `gen` to start the generation process with the selected model.
+5. Fill in the generation form.
+6. Receive your password receipt.
 
 ## 👀 Preview
 
@@ -115,15 +117,11 @@ dotnet publish -c Release -r osx-x64 --self-contained
 
 ## 📦 Dependencies
 
-- [Microsoft.Extensions.Configuration](https://github.com/dotnet/runtime)
-- [Microsoft.Extensions.Configuration.EnvironmentVariables](https://github.com/dotnet/runtime)
-- [Microsoft.Extensions.Configuration.Json](https://github.com/dotnet/runtime)
 - [Microsoft.Extensions.DependencyInjection](https://github.com/dotnet/runtime)
 - [PupaLib.Core](https://github.com/Artpupser/PupaLib.Core)
 - [PupaLib.FileIO](https://github.com/Artpupser/PupaLib.FileIO)
 - [QRCoder](https://github.com/codebude/QRCoder)
 - [TextCopy](https://github.com/CopyText/TextCopy)
-- [dotenv.net](https://github.com/tonerdo/dotnet-env)
 - [Konscious.Security.Cryptography.Argon2](https://github.com/kmaragon/Konscious.Security.Cryptography)
 
 ## 🗃️ Devlog
@@ -135,6 +133,7 @@ dotnet publish -c Release -r osx-x64 --self-contained
 - More information with generation password.
 - Qr-code for copy paste password on phone with minimal effort.
 - All oldest <alpha, beta> generators supports in new version.
+- Upgraded rendering UI system. (Composite pattern)
 
 ### 1.2.0
 
