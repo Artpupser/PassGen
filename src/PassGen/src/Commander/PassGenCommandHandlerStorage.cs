@@ -13,6 +13,7 @@ using PassGen.UI.Widgets;
 using PupaLib.Core;
 
 namespace PassGen.Commander;
+
 public sealed class PassGenCommandHandlerStorage(
    IUserConfiguration configuration,
    Graphics graphics,
@@ -27,7 +28,7 @@ public sealed class PassGenCommandHandlerStorage(
    [CommanderHandlerInfo("help", "View all commands")]
    public async Task HelpHandler(ICommand command, CancellationToken cancellationToken) {
       var table = new TableWidget(["Command", "Description"],
-         this.GetHandlersAttributes().Select(x=>new[] {x.Name, x.Description}).ToArray(), [20, 120]);
+         this.GetHandlersAttributes().Select(x => new[] { x.Name, x.Description }).ToArray(), [20, 120]);
       await table.Render(graphics, cancellationToken);
    }
 
@@ -62,23 +63,30 @@ public sealed class PassGenCommandHandlerStorage(
                prop.SetValue(tuple.Index == 0, instance);
                return;
             }
+
             await graphics.RenderTextLine(cancelMessage, graphics.Bad);
          }
 
          async Task ChangeQrCodeBuffer(CancellationToken cancellationToken2) {
-            await ChangeBoolean("Save qrcode in buffer?", "qrcode_buffer not sets.", configuration.GetType().GetProperty(nameof(configuration.QrCodeBuffer))!, configuration, cancellationToken2);
+            await ChangeBoolean("Save qrcode in buffer?", "qrcode_buffer not sets.",
+               configuration.GetType().GetProperty(nameof(configuration.QrCodeBuffer))!, configuration,
+               cancellationToken2);
          }
 
          async Task ChangeQrCodeHidden(CancellationToken cancellationToken2) {
-            await ChangeBoolean("Hide qrcode to render?", "qrcode_hidden not sets.", configuration.GetType().GetProperty(nameof(configuration.QrCodeHidden))!, configuration, cancellationToken2);
+            await ChangeBoolean("Hide qrcode to render?", "qrcode_hidden not sets.",
+               configuration.GetType().GetProperty(nameof(configuration.QrCodeHidden))!, configuration,
+               cancellationToken2);
          }
 
          async Task ChangeHidden(CancellationToken cancellationToken2) {
-            await ChangeBoolean("Hide character password?", "hidden not sets.", configuration.GetType().GetProperty(nameof(configuration.Hidden))!, configuration, cancellationToken2);
+            await ChangeBoolean("Hide character password?", "hidden not sets.",
+               configuration.GetType().GetProperty(nameof(configuration.Hidden))!, configuration, cancellationToken2);
          }
 
          Task ChangePalette(CancellationToken cancellationToken2) {
-            var paletteCheckoutWidget = CheckoutWidget<string>.ConsoleInputCheckoutWidget("Select palette", IColorPalette.GetPaletteNames(Asm), inputService);
+            var paletteCheckoutWidget = CheckoutWidget<string>.ConsoleInputCheckoutWidget("Select palette",
+               IColorPalette.GetPaletteNames(Asm), inputService);
             if (!paletteCheckoutWidget.Result.Out(out var paletteCheckoutWidgetResult))
                return Task.CompletedTask;
             configuration.Palette = paletteCheckoutWidgetResult.Value;
@@ -98,7 +106,8 @@ public sealed class PassGenCommandHandlerStorage(
    [CommanderHandlerInfo("color", "Manipulate color scheme")]
    public async Task ColorHandler(ICommand command, CancellationToken cancellationToken) {
       if (command.Tags.Contains("list")) {
-         var colorTableWidget = new TableWidget(["Name"], IColorPalette.GetPaletteNames(Asm).Select(x => new[] { x }).ToArray(), [20]);
+         var colorTableWidget = new TableWidget(["Name"],
+            IColorPalette.GetPaletteNames(Asm).Select(x => new[] { x }).ToArray(), [20]);
          await colorTableWidget.Render(graphics, cancellationToken);
          return;
       }
@@ -128,8 +137,9 @@ public sealed class PassGenCommandHandlerStorage(
    public async Task SetHandler(ICommand command, CancellationToken cancellationToken) {
       if (command.Tags.Contains("list")) {
          if (!passwordRouter.GetAttributes().Out(out var list)) return;
-         var modelTableWidget = new TableWidget("Name|Description".Split('|'), list.Select(x => new string[] { x.Name, x.Description }).ToArray(), [20,120]);
-         await modelTableWidget.Render(graphics,cancellationToken);
+         var modelTableWidget = new TableWidget("Name|Description".Split('|'),
+            list.Select(x => new string[] { x.Name, x.Description }).ToArray(), [20, 120]);
+         await modelTableWidget.Render(graphics, cancellationToken);
          return;
       }
 
@@ -144,12 +154,14 @@ public sealed class PassGenCommandHandlerStorage(
             await graphics.RenderTextLine($"Sets generator model, -> {command.Value}");
             return;
          }
+
          await graphics.RenderTextLine($"Model <{command.Value}> not found");
-         
+
          return;
       }
-      
-      await graphics.RenderTextLine($"Current model is {(passwordRouter.Current == null ? "null" : $"\'{passwordRouter.Current.GetType().GetCustomAttribute<PasswordGeneratorInfoAttribute>()!.Name}\'")}");
+
+      await graphics.RenderTextLine(
+         $"Current model is {(passwordRouter.Current == null ? "null" : $"\'{passwordRouter.Current.GetType().GetCustomAttribute<PasswordGeneratorInfoAttribute>()!.Name}\'")}");
    }
 
    [CommanderHandlerInfo("gen", "Generate password.")]
@@ -176,6 +188,7 @@ public sealed class PassGenCommandHandlerStorage(
          _handlersCache.Preload(() => Task.FromResult(this.GetHandlersWithName())).Wait();
          Console.WriteLine($"Count: {_handlersCache.Count}");
       }
+
       return _handlersCache.TryGet(name);
    }
 }

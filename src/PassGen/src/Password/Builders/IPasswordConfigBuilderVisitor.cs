@@ -8,7 +8,7 @@ public interface IPasswordConfigBuilderVisitor {
 
    public Task<Option> VisitBeta(PasswordGeneratorBetaConfigBuilder builder,
       CancellationToken cancellationToken = default);
-   
+
    public Task<Option> VisitArgon(PasswordGeneratorArgonConfigBuilder builder,
       CancellationToken cancellationToken = default);
 }

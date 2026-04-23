@@ -15,18 +15,14 @@ public sealed class Cache<T> {
    }
 
    public async Task<T> AddOrLoad(string name, Func<Task<T>> loadCallback) {
-      if (_dict.TryGetValue(name, out var load)) {
-         return load;
-      }
+      if (_dict.TryGetValue(name, out var load)) return load;
       _dict.Add(name, await loadCallback());
       return _dict[name];
    }
 
    public async Task Preload(Func<Task<IEnumerable<(string, T)>>> loadCallback) {
       var list = await loadCallback();
-      foreach (var item in list) {
-         _dict.Add(item.Item1, item.Item2);
-      }
+      foreach (var item in list) _dict.Add(item.Item1, item.Item2);
 
       Preloaded = true;
    }

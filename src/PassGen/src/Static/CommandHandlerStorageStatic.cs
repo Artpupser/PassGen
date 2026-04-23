@@ -5,10 +5,11 @@ using PassGen.Commander;
 namespace PassGen.Static;
 
 public static class CommandHandlerStorageStatic {
-   public static IEnumerable<(string, ICommandProcessor.CommanderHandlerDelegate)> GetHandlersWithName(this ICommandHandlerStorage obj) {
+   public static IEnumerable<(string, ICommandProcessor.CommanderHandlerDelegate)> GetHandlersWithName(
+      this ICommandHandlerStorage obj) {
       var methods = obj.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public)
          .Where(x => x.IsDefined(typeof(CommanderHandlerInfoAttribute), false)).ToArray();
-      var result = new(string, ICommandProcessor.CommanderHandlerDelegate)[methods.Length];
+      var result = new (string, ICommandProcessor.CommanderHandlerDelegate)[methods.Length];
 
       for (var i = 0; i < methods.Length; i++) {
          var attr = methods[i].GetCustomAttribute<CommanderHandlerInfoAttribute>()!.Name ??
@@ -20,7 +21,7 @@ public static class CommandHandlerStorageStatic {
 
       return result;
    }
-   
+
    public static IEnumerable<CommanderHandlerInfoAttribute> GetHandlersAttributes(this ICommandHandlerStorage obj) {
       var methods = obj.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public)
          .Where(x => x.IsDefined(typeof(CommanderHandlerInfoAttribute), false)).ToArray();

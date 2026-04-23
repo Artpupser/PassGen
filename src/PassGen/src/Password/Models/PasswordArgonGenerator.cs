@@ -23,14 +23,14 @@ public class PasswordArgonGenerator : PasswordGenerator {
       var rnd = new Random(time.Nanosecond + time.Microsecond + time.Millisecond + time.Second);
       var password = await CryptoUtils.GenerateArgonAsync(key, length,
          Encoding.UTF8.GetBytes($"{time.ToLongDateString()}{rnd.Next(int.MinValue, int.MaxValue)}{length}"));
-      
-      var result = new PasswordArgonResult() {
+
+      var result = new PasswordArgonResult {
          CreatedAt = time,
          Password = password[..length],
          KeyCode = key
       };
 
-      
+
       return Option<PasswordResult>.Ok(result);
    }
 

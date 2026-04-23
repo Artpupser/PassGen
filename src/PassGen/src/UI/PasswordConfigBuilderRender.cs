@@ -59,7 +59,8 @@ public sealed class PasswordConfigBuilderRender(Graphics graphics, ConsoleInputS
       return Option.Ok();
    }
 
-   public async Task<Option> VisitArgon(PasswordGeneratorArgonConfigBuilder builder, CancellationToken cancellationToken = default) {
+   public async Task<Option> VisitArgon(PasswordGeneratorArgonConfigBuilder builder,
+      CancellationToken cancellationToken = default) {
       var checkoutWidgetLength = CheckoutWidget<int>.ConsoleInputCheckoutWidget("Password length",
          [2 << 2, 2 << 3, 2 << 4, 2 << 5, 2 << 6, 2 << 7, 2 << 8], inputService);
       await checkoutWidgetLength.Render(graphics, cancellationToken);

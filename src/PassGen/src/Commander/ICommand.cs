@@ -7,6 +7,5 @@ public interface ICommand {
    public string Name { get; }
    public string Value { get; }
    public HashSet<string> Tags { get; }
-
    public Option Load(string input);
 }

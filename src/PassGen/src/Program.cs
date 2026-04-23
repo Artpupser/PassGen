@@ -8,6 +8,7 @@ using PassGen.UI;
 using PassGen.UI.Palettes;
 using PassGen.Password;
 using PassGen.Services;
+using PassGen.Static;
 using PassGen.UI.Widgets;
 
 using PupaLib.FileIO;
@@ -15,16 +16,14 @@ using PupaLib.FileIO;
 namespace PassGen;
 
 internal static class Program {
-   public static readonly VirtualFile ConfigurationFile = VirtualIo.RootFolder.GetFileIn("user.json") ??
-                                                          throw new Exception(
-                                                             "file with name \'user.json\' not found.");
-
    private static async Task Main() {
+      Kernel.ConsoleInit();
       var cts = new CancellationTokenSource();
       var token = cts.Token;
-
       var services = new ServiceCollection();
-      var config = new UserConfiguration(ConfigurationFile);
+      var config = new UserConfiguration(VirtualIo.RootFolder.GetFileIn("user.json") ??
+                                         throw new Exception(
+                                            "file with name \'user.json\' not found."));
       await config.LoadAsync(token).ConfigureAwait(false);
       services.AddSingleton<IUserConfiguration>(_ => config);
       services.AddSingleton<IColorPalette>(static serviceProvider => {
