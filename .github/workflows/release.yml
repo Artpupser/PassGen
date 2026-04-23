@@ -51,7 +51,7 @@ jobs:
           path: artifacts
           
       - name: Create release
-        uses: actions/action-gh-release@v3
+        uses: softprops/action-gh-release@v3
         with: 
           name: "PassGen ${{ github.ref_name }}"
           tag_name: ${{ github.ref_name }}
