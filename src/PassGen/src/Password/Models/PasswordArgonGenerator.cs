@@ -2,6 +2,7 @@
 
 using Konscious.Security.Cryptography;
 
+using PassGen.Crypto;
 using PassGen.Password.Builders;
 using PassGen.Password.Configs;
 using PassGen.Password.Results;
@@ -20,15 +21,8 @@ public class PasswordArgonGenerator : PasswordGenerator {
          return Option<PasswordResult>.Fail();
 
       var rnd = new Random(time.Nanosecond + time.Microsecond + time.Millisecond + time.Second);
-      var argon = new Argon2id(Encoding.UTF8.GetBytes(key)) {
-         Salt = Encoding.UTF8.GetBytes($"{time.ToLongDateString()}{rnd.Next(int.MinValue, int.MaxValue)}{length}"),
-         DegreeOfParallelism = 4,
-         Iterations = 4,
-         MemorySize = 1024 * 64
-      };
-
-      var bytes=  await argon.GetBytesAsync(length);
-      var password = Convert.ToBase64String(bytes);
+      var password = await CryptoUtils.GenerateArgonAsync(key, length,
+         Encoding.UTF8.GetBytes($"{time.ToLongDateString()}{rnd.Next(int.MinValue, int.MaxValue)}{length}"));
       
       var result = new PasswordArgonResult() {
          CreatedAt = time,

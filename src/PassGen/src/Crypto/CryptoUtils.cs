@@ -17,15 +17,15 @@ public static class CryptoUtils {
       return Convert.ToBase64String(Encoding.UTF8.GetBytes(str));
    }
 
-   public static string GenerateArgon(string content) {
-      var salt = RandomNumberGenerator.GetBytes(16);
-      var argon2 = new Argon2id(Encoding.UTF8.GetBytes(content)) {
+   public static async Task<string> GenerateArgonAsync(string secret, int length, byte[]? salt = null) {
+      salt ??= RandomNumberGenerator.GetBytes(16);
+      var argon2 = new Argon2id(Encoding.UTF8.GetBytes(secret)) {
          Salt = salt,
-         DegreeOfParallelism = 8,
+         DegreeOfParallelism = 4,
          Iterations = 4,
          MemorySize = ushort.MaxValue
       };
-      var hash = argon2.GetBytes(32);
+      var hash = await argon2.GetBytesAsync(length);
       return Convert.ToBase64String(hash);
    }
 
