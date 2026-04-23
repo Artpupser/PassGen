@@ -59,11 +59,30 @@ public sealed class PasswordResultRender(Graphics graphics, IUserConfiguration c
       await AfterCheckGeneration(sb, result.Password, cancellationToken);
    }
 
+   public async Task VisitArgon(PasswordArgonResult result, CancellationToken cancellationToken) {
+      var sb = new StringBuilder();
+      Graphics.ClearScreen();
+      await BeforeCheckGeneration("<< Argon generation result ⚡⚡⚡ >>", result, cancellationToken);
+      var endCheckText = result.CreatedAt.ToString(CultureInfo.InvariantCulture);
+      sb.AppendLine(StartCheckText.PadRight(LineCheckWidth / 2 + StartCheckText.Length / 2, '_')
+         .PadLeft(LineCheckWidth, '_'));
+      sb.AppendLine($"PASSWORD: {result.Password}");
+      sb.AppendLine($"RESTORE: ");
+      sb.AppendLine($"\tSECRET: {result.KeyCode}");
+      sb.AppendLine($"\tLENGTH: {result.Length}");
+      sb.AppendLine($"\tCREATED_AT: {result.CreatedAt}");
+      sb.AppendLine($"INFO: ");
+      sb.AppendLine($"\tEMAIL: ");
+      sb.AppendLine(endCheckText.PadRight(LineCheckWidth / 2 + endCheckText.Length / 2, '_')
+         .PadLeft(LineCheckWidth, '_'));
+      await AfterCheckGeneration(sb, result.Password, cancellationToken);
+   }
+
    public async Task VisitAlpha(PasswordAlphaResult result, CancellationToken cancellationToken) {
       var sb = new StringBuilder();
       await BeforeCheckGeneration("<< Alpha generation result ⚡ >>", result, cancellationToken);
 
-      var endCheckText = result.CreatedAt.ToString(CultureInfo.InvariantCulture);
+      var endCheckText = result.CreatedAt.ToString(CultureInfo.CurrentCulture);
       sb.AppendLine(StartCheckText.PadRight(LineCheckWidth / 2 + StartCheckText.Length / 2, '_')
          .PadLeft(LineCheckWidth, '_'));
       sb.AppendLine($"PASSWORD: {result.Password}");

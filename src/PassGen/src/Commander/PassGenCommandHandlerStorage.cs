@@ -162,12 +162,17 @@ public sealed class PassGenCommandHandlerStorage : ICommandHandlerStorage {
          return;
       }
 
-      if (PasswordRouter.ChangeModel(command.Value)) {
-         await Graphics.RenderText($"Sets generator model, -> {command.Value}");
+      if (!string.IsNullOrWhiteSpace(command.Value)) {
+         if (PasswordRouter.ChangeModel(command.Value)) {
+            await Graphics.RenderTextLine($"Sets generator model, -> {command.Value}");
+            return;
+         }
+         await Graphics.RenderTextLine($"Model <{command.Value}> not found");
+         
          return;
       }
-
-      await Graphics.RenderText($"Model <{command.Value}> not found");
+      
+      await Graphics.RenderTextLine($"Current model is {(PasswordRouter.Current == null ? "null" : $"\'{PasswordRouter.Current.GetType().GetCustomAttribute<PasswordGeneratorInfoAttribute>()!.Name}\'")}");
    }
 
    [CommanderHandlerId("/gen")]
