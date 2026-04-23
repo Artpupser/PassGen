@@ -1,6 +1,4 @@
-﻿using System.Collections.Frozen;
-
-using PupaLib.Core;
+﻿using PupaLib.Core;
 
 namespace PassGen.Commander;
 

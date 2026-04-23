@@ -1,6 +1,5 @@
 ﻿using PassGen.Password.Builders;
 using PassGen.Services;
-using PassGen.UI;
 using PassGen.UI.Widgets;
 
 using PupaLib.Core;

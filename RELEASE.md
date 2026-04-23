@@ -11,8 +11,8 @@
 - More information with generation password.
 - Qr-code for copy paste password on phone with minimal effort.
 - All oldest <alpha, beta> generators supports in new version.
-- User configuration: color scheme, hide password characters
-
+- Upgraded rendering UI system (Composite pattern).
+- New model generation -> 'Argon'.
 ## ⚡ Usage
 
-Launch execute file
+Launch execute file & enjoy =)

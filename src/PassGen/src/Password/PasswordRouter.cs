@@ -1,5 +1,4 @@
-﻿using System.Collections.Frozen;
-using System.Reflection;
+﻿using System.Reflection;
 
 using PassGen.Password.Models;
 

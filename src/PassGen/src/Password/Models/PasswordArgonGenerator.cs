@@ -1,7 +1,5 @@
 ﻿using System.Text;
 
-using Konscious.Security.Cryptography;
-
 using PassGen.Crypto;
 using PassGen.Password.Builders;
 using PassGen.Password.Configs;

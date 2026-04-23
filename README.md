@@ -133,7 +133,8 @@ dotnet publish -c Release -r osx-x64 --self-contained
 - More information with generation password.
 - Qr-code for copy paste password on phone with minimal effort.
 - All oldest <alpha, beta> generators supports in new version.
-- Upgraded rendering UI system. (Composite pattern)
+- Upgraded rendering UI system (Composite pattern). 
+- New model generation -> 'Argon'.
 
 ### 1.2.0
 
