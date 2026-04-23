@@ -86,11 +86,14 @@ public sealed class PasswordConfigBuilderRender(Graphics graphics, ConsoleInputS
       while (!cancellationToken.IsCancellationRequested) {
          inputField = InputField.ConsoleInputField("Time", inputService);
          await inputField.Render(graphics, cancellationToken);
-         if (inputField.Result == string.Empty)
+         if (inputField.Result == string.Empty || cancellationToken.IsCancellationRequested)
             return Option.Fail();
-         if (!DateTime.TryParse(inputField.Result, out var time))
+         if (!DateTime.TryParse(inputField.Result, out var time)) {
+            await graphics.RenderTextLine($"Failed \'{time}\' date-time parse.", graphics.Wrong);
             continue;
+         }
          builder.WithTime(time);
+         break;
       }
 
       return Option.Ok();
