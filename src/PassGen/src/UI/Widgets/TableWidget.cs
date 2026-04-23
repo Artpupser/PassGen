@@ -4,7 +4,7 @@ public class TableWidget(string[] labels, string[][] items, int[] widths, IGraph
    public override IGraphicsElement? Parent => parent;
 
    public override async Task Render(Graphics graphics, CancellationToken cancellationToken = default) {
-      var lineWidth = labels.Length - 1 + widths.Sum();
+      var lineWidth = widths.Sum() + 1;
       await graphics.RenderTextLine(string.Empty.PadRight(lineWidth, '-'), graphics.Default);
       if (items.Sum(x => x.Length) % labels.Length == 0 && items.All(x => x.Length == labels.Length)) {
          for (var i = 0; i < labels.Length; i++) {

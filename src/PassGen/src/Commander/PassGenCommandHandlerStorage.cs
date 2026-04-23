@@ -84,15 +84,15 @@ public sealed class PassGenCommandHandlerStorage(
                configuration.GetType().GetProperty(nameof(configuration.Hidden))!, configuration, cancellationToken2);
          }
 
-         Task ChangePalette(CancellationToken cancellationToken2) {
+         async Task ChangePalette(CancellationToken cancellationToken2) {
             var paletteCheckoutWidget = CheckoutWidget<string>.ConsoleInputCheckoutWidget("Select palette",
                IColorPalette.GetPaletteNames(Asm), inputService);
+            await paletteCheckoutWidget.Render(graphics, cancellationToken2);
             if (!paletteCheckoutWidget.Result.Out(out var paletteCheckoutWidgetResult))
-               return Task.CompletedTask;
+               return;
             configuration.Palette = paletteCheckoutWidgetResult.Value;
             if (IColorPalette.GetPalette(configuration.Palette, Asm).Out(out var palette))
                graphics.ChangePalette(palette);
-            return Task.CompletedTask;
          }
       }
 
@@ -112,25 +112,41 @@ public sealed class PassGenCommandHandlerStorage(
          return;
       }
 
-      if (command.Tags.Contains("current")) {
+      if (command.Tags.Contains("all")) {
+         var width = 20;
+         foreach (var paletteName in IColorPalette.GetPaletteNames(Asm)) {
+            graphics.ChangePalette(IColorPalette.GetPalette(paletteName, Asm).Content);
+            await graphics.RenderTextLine(paletteName.PadLeft(width/2 + paletteName.Length / 2, ' ').PadRight(width, ' '));
+            await RenderPalette();
+            await graphics.RenderTextLine(string.Empty);
+         }
+         graphics.ChangePalette(IColorPalette.GetPalette(configuration.Palette, Asm).Content);
+         return;
+      }
+
+      if (!string.IsNullOrWhiteSpace(command.Value)) {
+         if (IColorPalette.GetPalette(command.Value, Asm).Out(out var palette)) {
+            graphics.ChangePalette(palette);
+            configuration.Palette = command.Value;
+            await configuration.Save(cancellationToken);
+            await graphics.RenderTextLine("Palette success changed", graphics.Success);
+            return;
+         }
+         await graphics.RenderTextLine("Palette not found", graphics.Bad);
+         return;
+      }
+
+      await RenderPalette();
+      return;
+
+      async ValueTask RenderPalette() {
          await graphics.RenderTextLine("Primary", graphics.Primary);
          await graphics.RenderTextLine("Default", graphics.Default);
          await graphics.RenderTextLine("Secondary", graphics.Secondary);
          await graphics.RenderTextLine("Success", graphics.Success);
          await graphics.RenderTextLine("Bad", graphics.Bad);
          await graphics.RenderTextLine("Wrong", graphics.Wrong);
-         return;
       }
-
-      if (IColorPalette.GetPalette(command.Value, Asm).Out(out var palette)) {
-         graphics.ChangePalette(palette);
-         configuration.Palette = command.Value;
-         await configuration.Save(cancellationToken);
-         await graphics.RenderTextLine("Palette success changed", graphics.Success);
-         return;
-      }
-
-      await graphics.RenderTextLine("Palette not found", graphics.Bad);
    }
 
    [CommanderHandlerInfo("model", "Manipulate generation mode.")]
@@ -186,9 +202,7 @@ public sealed class PassGenCommandHandlerStorage(
    public Option<ICommandProcessor.CommanderHandlerDelegate> Get(string name) {
       if (!_handlersCache.Preloaded) {
          _handlersCache.Preload(() => Task.FromResult(this.GetHandlersWithName())).Wait();
-         Console.WriteLine($"Count: {_handlersCache.Count}");
       }
-
       return _handlersCache.TryGet(name);
    }
 }
