@@ -186,9 +186,7 @@ public sealed class PassGenCommandHandlerStorage(
    public Option<ICommandProcessor.CommanderHandlerDelegate> Get(string name) {
       if (!_handlersCache.Preloaded) {
          _handlersCache.Preload(() => Task.FromResult(this.GetHandlersWithName())).Wait();
-         Console.WriteLine($"Count: {_handlersCache.Count}");
       }
-
       return _handlersCache.TryGet(name);
    }
 }
