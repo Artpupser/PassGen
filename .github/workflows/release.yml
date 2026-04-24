@@ -29,17 +29,31 @@ jobs:
         run: |
           dotnet restore
           dotnet publish $PROJECT_LIB_PATH -c Release -r ${{ matrix.runtime }} --self-contained -o publish/${{ matrix.runtime }}
-      
-      - name: "Archive"
+
+      - name: "Archive (tar.gz)"
+        if: contains(matrix.runtime, 'linux') || contains(matrix.runtime, 'osx')
         run: |
-          cd publish
-          tar -czf ${{ matrix.runtime }}.tar.gz ${{ matrix.runtime }}
+          tar -czf ${{ matrix.runtime }}.tar.gz -C publish ${{ matrix.runtime }}
+    
+      - name: "Archive (zip)"
+        if: contains(matrix.runtime, 'win')
+        run: |
+          cd publish/${{ matrix.runtime }}
+          zip -r ../../${{ matrix.runtime }}.zip .
           
-      - name: "Upload artifacts"
+      - name: "Upload tar.gz"
+        if: contains(matrix.runtime, 'linux') || contains(matrix.runtime, 'osx')
         uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.runtime }}
-          path: publish/${{ matrix.runtime }}.tar.gz
+          path: ${{ matrix.runtime }}.tar.gz
+    
+      - name: "Upload zip"
+        if: contains(matrix.runtime, 'win')
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.runtime }}
+          path: ${{ matrix.runtime }}.zip
   
   release:
     needs: build
