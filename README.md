@@ -34,6 +34,9 @@
 
 
 ## ✨️ Features
+
+<div align="center">
+
 | 🏆 Feature                  | 📝 Description                                                                |
 | --------------------------- | ----------------------------------------------------------------------------- |
 | Secure Password Generation  | Creates strong, random passwords that are hard to guess or crack.             |
@@ -42,6 +45,8 @@
 | Cross-Platform Support      | Works smoothly across different operating systems.                            |
 | Lightweight                 | Fast startup and minimal resource usage.                                      |
 | User-Friendly CLI interface | Simple design that makes password generation easy for everyone.               |
+
+</div>
 
 ## 🧵 Usage
 
@@ -55,6 +60,14 @@ Use your keyboard to interact with the app
 6. Receive your password receipt.
 
 ## 👀 Preview
+
+<div align="center">
+
+<img src="https://github.com/Artpupser/PassGen/blob/main/assets/preview2.jpg" style="border-radius: 20px;">
+
+<img src="https://github.com/Artpupser/PassGen/blob/main/assets/preview1.jpg" style="border-radius: 20px;">
+
+</div>
 
 ## 🦾 Installation
 

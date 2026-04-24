@@ -18,9 +18,9 @@ public class PasswordArgonGenerator : PasswordGenerator {
       if (!lengthOption.Out(out var length) || !keyOption.Out(out var key) || !timeOption.Out(out var time))
          return Option<PasswordResult>.Fail();
 
-      var rnd = new Random(time.Nanosecond + time.Microsecond + time.Millisecond + time.Second);
+      var rnd = new Random(time.Second + time.Minute + time.Hour + time.Day + time.Month + time.Year);
       var password = await CryptoUtils.GenerateArgonAsync(key, length,
-         Encoding.UTF8.GetBytes($"{time.ToLongDateString()}{rnd.Next(int.MinValue, int.MaxValue)}{length}"));
+         Encoding.UTF8.GetBytes($"{time}{rnd.Next(int.MinValue, int.MaxValue)}{length}"));
 
       var result = new PasswordArgonResult {
          CreatedAt = time,
